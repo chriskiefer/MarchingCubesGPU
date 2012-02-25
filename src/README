@@ -1,0 +1,5 @@
+Marching Cubes Algorithm, running on the GPU using a geometry shader.
+
+Ported from the GLUT/Windows project at http://www.icare3d.org/blog_techno/gpu/opengl_geometry_shader_marching_cubes.html to OpenFrameworks / OSX.
+
+Read more at http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
