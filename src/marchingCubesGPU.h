@@ -13,6 +13,7 @@
 
 #include "Vector.h"
 #include "ofMain.h"
+#include "simplexnoise1234.h"
 
 using namespace NemoGraphics;
 
@@ -26,6 +27,7 @@ class marchingCubesGPU {
 public:
     
     void setup();
+    void prepareToDraw();
     void draw();
     void initShader(GLhandleARB programObject, const char *filen, GLuint type);
     void toggleWireframe();
@@ -65,6 +67,16 @@ public:
 	GLuint gridDataSwizzledBuffId;
     
     GLhandleARB programObject;
+
+    SimplexNoise1234 simplexNoise;
+    float noise1[96][96][96];
+    float noise2[96][96][96];
+    float noise3[96][96][96];
+    float noise4[96][96][96];
+    
+    uint densityFBO;
+    uint textureID;
+    unsigned char *densityData;
 
 
 };

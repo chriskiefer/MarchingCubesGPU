@@ -19,6 +19,7 @@
 		83544892140CFBC900D16314 /* maxiMFCC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544889140CFBC900D16314 /* maxiMFCC.cpp */; };
 		83544893140CFBC900D16314 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8354488B140CFBC900D16314 /* maximilian.cpp */; };
 		83EE5CC214F98B6D00DF08E6 /* marchingCubesGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE5CC114F98B6D00DF08E6 /* marchingCubesGPU.cpp */; };
+		83EE5CC814FA92CD00DF08E6 /* simplexnoise1234.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE5CC614FA92CD00DF08E6 /* simplexnoise1234.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -91,6 +92,8 @@
 		8354488E140CFBC900D16314 /* ofxMaxim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMaxim.h; sourceTree = "<group>"; };
 		83EE5CC014F98B6100DF08E6 /* marchingCubesGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = marchingCubesGPU.h; sourceTree = "<group>"; };
 		83EE5CC114F98B6D00DF08E6 /* marchingCubesGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = marchingCubesGPU.cpp; sourceTree = "<group>"; };
+		83EE5CC614FA92CD00DF08E6 /* simplexnoise1234.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplexnoise1234.cpp; sourceTree = "<group>"; };
+		83EE5CC714FA92CD00DF08E6 /* simplexnoise1234.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simplexnoise1234.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -191,6 +194,8 @@
 		83EE5CC514F990D400DF08E6 /* marchingCubes */ = {
 			isa = PBXGroup;
 			children = (
+				83EE5CC614FA92CD00DF08E6 /* simplexnoise1234.cpp */,
+				83EE5CC714FA92CD00DF08E6 /* simplexnoise1234.h */,
 				830D681014F5A27C00D4ED21 /* mctables.cpp */,
 				830D681114F5A2A300D4ED21 /* Vector.h */,
 				83EE5CC014F98B6100DF08E6 /* marchingCubesGPU.h */,
@@ -383,6 +388,7 @@
 				830D682614F84D6800D4ED21 /* TestG80_VS.vert in Sources */,
 				830D682714F84D6800D4ED21 /* TestG80_VS2.vert in Sources */,
 				83EE5CC214F98B6D00DF08E6 /* marchingCubesGPU.cpp in Sources */,
+				83EE5CC814FA92CD00DF08E6 /* simplexnoise1234.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

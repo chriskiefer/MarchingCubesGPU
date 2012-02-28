@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include <sstream>
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -19,9 +20,14 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    mc.prepareToDraw();
     cam.begin();
     mc.draw();
     cam.end();
+    ofSetColor(255,255,255);
+    stringstream fps;
+    fps << "fps: " << ofGetFrameRate();
+    ofDrawBitmapString(fps.str(), ofPoint(10,15));
 }
 
 

@@ -82,7 +82,7 @@ void marchingCubesGPU::setup() {
 	cubeSize=Vector3f(32,32,32);
 	cubeStep=Vector3f(2.0f, 2.0f, 2.0f)/cubeSize;
     
-	dataSize=Vector3i(128, 128, 128);
+	dataSize=Vector3i(64,64,64);
     
 	isolevel=0.5f;
 	animate=true;
@@ -99,6 +99,17 @@ void marchingCubesGPU::setup() {
     
 	//Form multi-face view
 	glDisable(GL_CULL_FACE);
+    
+    for(int i=0; i < 96; i++) {
+        for(int j=0; j < 96; j++) {
+            for(int k=0; k < 96; k++) {
+                noise1[i][j][k] = simplexNoise.noise(i/100.0,j/100.0,k/100.0);
+                noise2[i][j][k] = simplexNoise.noise(i/50.0,j/50.0,k/50.0);
+                noise3[i][j][k] = simplexNoise.noise(i/10.0,j/10.0,k/10.0);
+                noise4[i][j][k] = simplexNoise.noise(i/5.0,j/5.0,k/5.0);
+            }
+        }
+    }
     
     
 	glDepthMask(true);
@@ -216,11 +227,11 @@ void marchingCubesGPU::setup() {
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     
     //Generate a distance field to the center of the cube
+    Vector3f vectTo = Vector3f(dataSize.x/2.0,dataSize.y/2.0,dataSize.z/2.0);
 	dataField[0]=new float[dataSize.x*dataSize.y*dataSize.z];
 	for(int k=0; k<dataSize.z; k++)
         for(int j=0; j<dataSize.y; j++)
             for(int i=0; i<dataSize.x; i++){
-                Vector3f vectTo = Vector3f(dataSize.x/2.0,dataSize.y/2.0,dataSize.z/2.0);
                 float d=Vector3f(i, j, k).distance(vectTo)/(float)(dataSize.length()*0.4);
                 dataField[0][i+j*dataSize.x+k*dataSize.x*dataSize.y]=d;//+(rand()%100-50)/200.0f*d;
             }
@@ -260,15 +271,31 @@ void marchingCubesGPU::setup() {
 	//Cayley-polynomial//
 	dataField[2]=new float[dataSize.x*dataSize.y*dataSize.z];
     
+//	for(int k=0; k<dataSize.z; k++)
+//        for(int j=0; j<dataSize.y; j++)
+//            for(int i=0; i<dataSize.x; i++){
+//                float x=2.0f/dataSize.x*i-1.0f;
+//                float y=2.0f/dataSize.y*j-1.0f;
+//                float z=2.0f/dataSize.z*k-1.0f;
+//                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= 16.0f*x*y*z + 4.0f*x*x + 4.0f*y*y + 4.0f*z*z - 1.0f;
+//            }
+//    
 	for(int k=0; k<dataSize.z; k++)
         for(int j=0; j<dataSize.y; j++)
             for(int i=0; i<dataSize.x; i++){
                 float x=2.0f/dataSize.x*i-1.0f;
                 float y=2.0f/dataSize.y*j-1.0f;
                 float z=2.0f/dataSize.z*k-1.0f;
-                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= 16.0f*x*y*z + 4.0f*x*x + 4.0f*y*y + 4.0f*z*z - 1.0f;
+                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= z + (sin(i * 0.1) * 0.5 ) + (cos(j*0.2) * 0.2) + (cos(k*0.3) * 0.4);
             }
-    
+//   	for(int l=0; l<4; l++)
+//        for(int k=1; k<dataSize.z-1; k++)
+//            for(int j=1; j<dataSize.y-1; j++)
+//                for(int i=1; i<dataSize.x-1; i++){
+//                    dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]=(dataField[2][i+1+j*dataSize.x+k*dataSize.x*dataSize.y]+dataField[2][i-1+j*dataSize.x+k*dataSize.x*dataSize.y]+dataField[2][i+(j+1)*dataSize.x+k*dataSize.x*dataSize.y]+dataField[2][i+(j-1)*dataSize.x+k*dataSize.x*dataSize.y]+dataField[2][i+j*dataSize.x+(k+1)*dataSize.x*dataSize.y]+dataField[2][i+j*dataSize.x+(k-1)*dataSize.x*dataSize.y])/6.0f;
+//                }
+ 
+
 	glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[2]);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -350,10 +377,93 @@ void marchingCubesGPU::setup() {
 	glBindBuffer(GL_ARRAY_BUFFER_ARB, gridDataSwizzledBuffId);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, cubeSize.x*cubeSize.y*cubeSize.z*3*4, gridData, GL_STATIC_DRAW_ARB);
 	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    
+    
+    
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_3D, textureID);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    
+    densityData = new unsigned char[64*64*64*4];
+    for(int i=0; i < 64*64*64*4; i++) {
+        densityData[i] = (i) % 256;
+    }
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 64,64,64, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    
+    glGenFramebuffersEXT(1, &densityFBO);	
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
+    glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,32);
+    
+    int retval =glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    cout << "Framebuffer status: " << retval << endl;
+//	glDeleteTextures(1, &textureID);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+//    GL_FRAMEBUFFER_COMPLETE_EXT
+//    glDeleteFramebuffersEXT(1, &densityFBO);
 
 }
 
+void marchingCubesGPU::prepareToDraw() {
+	ofPushView();
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
+    glClearColor(0.0,0.0,0.0,0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    for(int z=0; z < 64; z++) {
+        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
+        ofViewport(0, 0, 64,64, false);
+        ofSetupScreenPerspective(64,64, ofGetOrientation(), false);
+        glBegin(GL_POINTS);
+        for(int i=0; i < 64; i++) {
+            for(int j=0; j < 64; j++) {
+                glColor4b(rand() %256, rand() %256,rand() %256, i);
+                glVertex3i(i,j,0);
+            }
+        }
+        glEnd();
+    }
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    //    ofFbo
+	ofPopView();
+}
+
+
 void marchingCubesGPU::draw() {
+
+//    float scale1=sin(ofGetFrameNum() / 90.0);
+//    for(int k=0; k<dataSize.z; k++)
+//        for(int j=0; j<dataSize.y; j++)
+//            for(int i=0; i<dataSize.x; i++){
+////                float x=2.0f/dataSize.x*i-1.0f;
+////                float y=2.0f/dataSize.y*j-1.0f;
+////                float z=2.0f/dataSize.z*k-1.0f;
+////                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= z + (sin(i * 0.1) * 0.5 ) + (cos(j*0.2) * 0.2) + (cos(k*0.3) * 0.4);
+////                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y] + (ofRandomf() * 0.01);
+//                float mod = (noise1[i][j][k] * 1.3) + (noise2[i][j][k] * 0.3) + (noise3[i][j][k] * 0.1) + (noise3[i][j][k] * 0.05);
+//                mod *= scale1 * 0.5;
+//                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= (2.0f/dataSize.z*k-1.0f) + mod;
+//            }
+    
+
+    
+//    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[2]);
+//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);    
+//	glTexImage3D( GL_TEXTURE_3D, 0, GL_ALPHA32F_ARB, dataSize.x, dataSize.y, dataSize.z, 0, GL_ALPHA, GL_FLOAT, dataField[2]);
+
+    glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_3D);
+    //    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+    glBindTexture(GL_TEXTURE_3D, textureID);
+	glDisable(GL_TEXTURE_3D);
+    
+
 	glDepthMask(GL_TRUE);
 	glClearColor(0.0,0.0,0.0,0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -416,17 +526,17 @@ void marchingCubesGPU::draw() {
     //Disable shader program
     glUseProgramObjectARB(NULL);
     
-    if(autoWay){
-        if(isolevel<1.5)
-            isolevel+=0.005;
-        else
-            autoWay=!autoWay;
-    }else{
-        if(isolevel>0.0)
-            isolevel-=0.005;
-        else
-            autoWay=!autoWay;
-    }
+//    if(autoWay){
+//        if(isolevel<1.5)
+//            isolevel+=0.005;
+//        else
+//            autoWay=!autoWay;
+//    }else{
+//        if(isolevel>0.0)
+//            isolevel-=0.005;
+//        else
+//            autoWay=!autoWay;
+//    }
     
     
 }
