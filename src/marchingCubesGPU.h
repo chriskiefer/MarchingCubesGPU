@@ -76,7 +76,7 @@ public:
     
     uint densityFBO;
     uint textureID;
-    unsigned char *densityData;
+    float *densityData;
 
 
 };

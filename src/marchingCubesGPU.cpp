@@ -82,7 +82,7 @@ void marchingCubesGPU::setup() {
 	cubeSize=Vector3f(32,32,32);
 	cubeStep=Vector3f(2.0f, 2.0f, 2.0f)/cubeSize;
     
-	dataSize=Vector3i(64,64,64);
+	dataSize=Vector3i(96,96,96);
     
 	isolevel=0.5f;
 	animate=true;
@@ -382,21 +382,44 @@ void marchingCubesGPU::setup() {
     
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     
-    densityData = new unsigned char[64*64*64*4];
-    for(int i=0; i < 64*64*64*4; i++) {
-        densityData[i] = (i) % 256;
-    }
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 64,64,64, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    densityData = new float[dataSize.x * dataSize.y * dataSize.z * 4];
+//    for(int i=0; i < 64*64*64*4; i++) {
+////        densityData[i] = (i) % 256;
+//        densityData[i] = rand() % 133;
+//    }
+    
+	for(int k=0; k<dataSize.z; k++)
+        for(int j=0; j<dataSize.y; j++)
+            for(int i=0; i<dataSize.x; i++){
+                float x=2.0f/dataSize.x*i-1.0f;
+                float y=2.0f/dataSize.y*j-1.0f;
+                float z=2.0f/dataSize.z*k-1.0f;
+                float val = z + (sin(i * 0.1) * 0.5 ) + (cos(j*0.2) * 0.2) + (cos(k*0.3) * 0.4);
+//                densityData[i+j*dataSize.x+k*dataSize.x*dataSize.y]= (k + rand() % 3) * 4;
+                densityData[(i+j*dataSize.x+k*dataSize.x*dataSize.y)*4]= 0;
+                densityData[(i+j*dataSize.x+k*dataSize.x*dataSize.y)*4+1]= 0;
+                densityData[(i+j*dataSize.x+k*dataSize.x*dataSize.y)*4+2]= 0;
+//                densityData[(i+j*dataSize.x+k*dataSize.x*dataSize.y)*4+3]= (k + rand() % 3) * 3;
+                densityData[(i+j*dataSize.x+k*dataSize.x*dataSize.y)*4+3]= rand() % 256;
+            }
+    
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA16, dataSize.x, dataSize.y, dataSize.z, 0, GL_RGBA, GL_FLOAT, densityData);
     
     glGenFramebuffersEXT(1, &densityFBO);	
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
-    glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,32);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);
+	for(int i=0; i < 64; i++) 
+        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,i);
     
     int retval =glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
     cout << "Framebuffer status: " << retval << endl;
@@ -405,29 +428,60 @@ void marchingCubesGPU::setup() {
 //    GL_FRAMEBUFFER_COMPLETE_EXT
 //    glDeleteFramebuffersEXT(1, &densityFBO);
 
+    glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_3D);
+    glBindTexture(GL_TEXTURE_3D, textureID);
+//    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+	glDisable(GL_TEXTURE_3D);
+    
+
 }
 
 void marchingCubesGPU::prepareToDraw() {
+//    glMatrixMode(GL_MODELVIEW);
+//    glPushMatrix();
+//    glLoadIdentity();
 	ofPushView();
+//    glMatrixMode(GL_PROJECTION); 
+//    glLoadIdentity(); 
+//    gluOrtho2D(0.0,64,0.0,64); 
+    ofViewport(0, 0, dataSize.x, dataSize.y, false);
+    ofSetupScreenPerspective(dataSize.x, dataSize.y, ofGetOrientation(), false);
+//    glMatrixMode(GL_PROJECTION);
+//    glPushMatrix();
+//    glLoadIdentity();
+//    glOrtho(0,64,0,64,0,64);
+//    glViewport(0, 0, 64,64);
+    glDisable(GL_TEXTURE_3D);
+    glDisable(GL_DEPTH_TEST);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
-    glClearColor(0.0,0.0,0.0,0.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    for(int z=0; z < 64; z++) {
+    float scale1=sin(ofGetFrameNum() / 90.0);
+    for(int z=0; z < dataSize.z; z++) {
         glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
-        ofViewport(0, 0, 64,64, false);
-        ofSetupScreenPerspective(64,64, ofGetOrientation(), false);
+        glClearColor(0.0,0.0,0.0,0);
+        glClear(GL_COLOR_BUFFER_BIT);
         glBegin(GL_POINTS);
-        for(int i=0; i < 64; i++) {
-            for(int j=0; j < 64; j++) {
-                glColor4b(rand() %256, rand() %256,rand() %256, i);
-                glVertex3i(i,j,0);
+        for(int i=0; i < dataSize.x; i++) {
+            for(int j=0; j < dataSize.y; j++) {
+                float mod = (noise1[i][j][z]*0.5);
+                mod += (noise2[i][j][z] * 0.3);
+                mod *= scale1;
+                glColor4f(0,0,0,(z/(float)dataSize.z) + mod);
+                glVertex2f(i,j);
             }
         }
         glEnd();
     }
+    
+//    glMatrixMode(GL_PROJECTION);
+//    glPopMatrix();
+//    glMatrixMode(GL_MODELVIEW);
+//    glPopMatrix();
+
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
     //    ofFbo
 	ofPopView();
+
 }
 
 
@@ -457,11 +511,14 @@ void marchingCubesGPU::draw() {
 //	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);    
 //	glTexImage3D( GL_TEXTURE_3D, 0, GL_ALPHA32F_ARB, dataSize.x, dataSize.y, dataSize.z, 0, GL_ALPHA, GL_FLOAT, dataField[2]);
 
-    glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_3D);
-    //    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
-    glBindTexture(GL_TEXTURE_3D, textureID);
-	glDisable(GL_TEXTURE_3D);
+//    glActiveTexture(GL_TEXTURE0);
+//	glEnable(GL_TEXTURE_3D);
+//    //    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+//    glBindTexture(GL_TEXTURE_3D, textureID);
+//	glDisable(GL_TEXTURE_3D);
+    
+    
+    
     
 
 	glDepthMask(GL_TRUE);
