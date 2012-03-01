@@ -85,6 +85,7 @@ public:
     GLuint noiseSize;
     float *surfaceGridData;
     GLuint surfaceGridVBO;
+    
 
 
 };

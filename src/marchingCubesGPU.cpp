@@ -610,39 +610,6 @@ void marchingCubesGPU::prepareToDraw() {
 
 void marchingCubesGPU::draw() {
 
-//    float scale1=sin(ofGetFrameNum() / 90.0);
-//    for(int k=0; k<dataSize.z; k++)
-//        for(int j=0; j<dataSize.y; j++)
-//            for(int i=0; i<dataSize.x; i++){
-////                float x=2.0f/dataSize.x*i-1.0f;
-////                float y=2.0f/dataSize.y*j-1.0f;
-////                float z=2.0f/dataSize.z*k-1.0f;
-////                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= z + (sin(i * 0.1) * 0.5 ) + (cos(j*0.2) * 0.2) + (cos(k*0.3) * 0.4);
-////                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y] + (ofRandomf() * 0.01);
-//                float mod = (noise1[i][j][k] * 1.3) + (noise2[i][j][k] * 0.3) + (noise3[i][j][k] * 0.1) + (noise3[i][j][k] * 0.05);
-//                mod *= scale1 * 0.5;
-//                dataField[2][i+j*dataSize.x+k*dataSize.x*dataSize.y]= (2.0f/dataSize.z*k-1.0f) + mod;
-//            }
-    
-
-    
-//    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[2]);
-//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);    
-//	glTexImage3D( GL_TEXTURE_3D, 0, GL_ALPHA32F_ARB, dataSize.x, dataSize.y, dataSize.z, 0, GL_ALPHA, GL_FLOAT, dataField[2]);
-
-//    glActiveTexture(GL_TEXTURE0);
-//	glEnable(GL_TEXTURE_3D);
-//    //    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
-//    glBindTexture(GL_TEXTURE_3D, textureID);
-//	glDisable(GL_TEXTURE_3D);
-    
-    
-    
-    
     //Shader program binding
     glUseProgramObjectARB(programObject);
 
@@ -664,10 +631,7 @@ void marchingCubesGPU::draw() {
 	glColor4f(cosf(isolevel*10.0-0.5), sinf(isolevel*10.0-0.5), cosf(1.0-isolevel),1.0);
     
     //    //Current isolevel uniform parameter setting
-    glUniform1f(glGetUniformLocationARB(programObject, "isolevel"), ofGetMouseX() / (float)ofGetWidth()); 
-    
-    //glEnable(GL_LIGHTING);
-    
+    glUniform1f(glGetUniformLocationARB(programObject, "isolevel"), isolevel); 
     //Switch to wireframe or solid rendering mode
     if(wireframe)
         glPolygonMode(GL_FRONT_AND_BACK , GL_LINE );
@@ -675,19 +639,6 @@ void marchingCubesGPU::draw() {
         glPolygonMode(GL_FRONT_AND_BACK , GL_FILL );
     
     
-    //    if(!enableVBO){
-    //Initial geometries are points. One point is generated per marching cube.
-    //        glBegin(GL_POINTS);
-    //        for(float k=-1; k<1.0f; k+=cubeStep.z)
-    //            for(float j=-1; j<1.0f; j+=cubeStep.y)
-    //                for(float i=-1; i<1.0f; i+=cubeStep.x){
-    //                    glVertex3f(i, j, k);	
-    ////                    if (ofGetFrameNum() % 500 == 0)
-    ////                        cout << i << "," << j << "," << k << endl;
-    //                }
-    //        glEnd();
-    //    }else{
-    ///VBO
     if(enableSwizzledWalk)
         glBindBuffer(GL_ARRAY_BUFFER_ARB, gridDataSwizzledBuffId);
     else
@@ -699,7 +650,6 @@ void marchingCubesGPU::draw() {
     glDisableClientState(GL_VERTEX_ARRAY);
     
     glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-    //    }
     
     
     

@@ -26,6 +26,7 @@ void testApp::draw(){
     cam.end();
     ofSetColor(255,255,255);
     stringstream fps;
+    fps << "'d': change mode, mousex => isolevel, drag mouse => move camera\n";
     fps << "fps: " << ofGetFrameRate();
     ofDrawBitmapString(fps.str(), ofPoint(10,15));
 }
@@ -51,6 +52,7 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+    mc.isolevel = ofGetMouseX() / (float)ofGetWidth();
 
 }
 
