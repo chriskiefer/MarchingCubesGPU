@@ -165,43 +165,8 @@ void marchingCubesGPU::setup() {
     surfaceShader.end();
     
     std::cout<<"InitShader: "<<gluErrorString(glGetError())<<"\n";
-
-
-//    surfaceProgram = glCreateProgramObjectARB();
-//	////Shaders loading////
-//	initShader(surfaceProgram, ofToDataPath("surface.vert").c_str(), GL_VERTEX_SHADER_ARB);
-//	//Fragment Shader for per-fragment lighting
-//	initShader(surfaceProgram, ofToDataPath("surface.frag").c_str(), GL_FRAGMENT_SHADER_ARB);
-//    glLinkProgramARB(surfaceProgram);
-//    //	//Test link success
-//	GLint ok = false;
-//    glGetObjectParameterivARB(surfaceProgram, GL_OBJECT_LINK_STATUS_ARB, &ok);
-//	if (!ok){
-//		GLint maxLength=4096;
-//		char *infoLog = new char[maxLength];
-//		glGetInfoLogARB(surfaceProgram, maxLength, &maxLength, infoLog);
-//		std::cout<<"Link error: "<<infoLog<<"\n";
-//		delete []infoLog;
-//	}
-//    
-//    //Program validation
-//    glValidateProgramARB(surfaceProgram);
-//    ok = false;
-//    glGetObjectParameterivARB(surfaceProgram, GL_OBJECT_VALIDATE_STATUS_ARB, &ok);
-//    if (!ok){
-//		int maxLength=4096;
-//		char *infoLog = new char[maxLength];
-//		glGetInfoLogARB(surfaceProgram, maxLength, &maxLength, infoLog);
-//		std::cout<<"Validation error: "<<infoLog<<"\n";
-//		delete []infoLog;
-//	}
-//    
-//	//Bind program object for parameters setting
-////	glUseProgramObjectARB(surfaceProgram);
-    
     
     programObject = glCreateProgramObjectARB();
-    
     
 	////Shaders loading////
 	//Geometry Shader loading
@@ -518,14 +483,9 @@ void marchingCubesGPU::setup() {
     
     int retval =glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
     cout << "Framebuffer status: " << retval << endl;
-//	glDeleteTextures(1, &textureID);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-//    GL_FRAMEBUFFER_COMPLETE_EXT
-//    glDeleteFramebuffersEXT(1, &densityFBO);
-
     glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_3D);
-//    glBindTexture(GL_TEXTURE_3D, textureID);
     glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
 	glDisable(GL_TEXTURE_3D);
     
@@ -541,24 +501,6 @@ void marchingCubesGPU::prepareToDraw() {
         glDisable(GL_TEXTURE_3D);
         glEnable(GL_DEPTH_TEST);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
-        
-    //    surfaceShader.begin();
-    //    float scale1=sin(ofGetFrameNum() / 50.0) * 2;
-    //    surfaceShader.setUniform1f("scale", scale1);
-    //    for(int z=0; z < dataSize.z; z++) {
-    //        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
-    //        glClearColor(0.0,0.0,0.0,0);
-    //        glClear(GL_COLOR_BUFFER_BIT);
-    //        glBegin(GL_POINTS);
-    //        surfaceShader.setAttribute1f(sliceAttrib, z);
-    //        for(int i=0; i < dataSize.x; i++) {
-    //            for(int j=0; j < dataSize.y; j++) {
-    //                glVertex2f(i,j);
-    //            }
-    //        }
-    //        glEnd();
-    //    }
-    //    surfaceShader.end();
         
         surfaceShader.begin();
         float scale1=sin(ofGetFrameNum() / 50.0) * 2;
@@ -579,30 +521,8 @@ void marchingCubesGPU::prepareToDraw() {
         glDisableClientState(GL_VERTEX_ARRAY);
         glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);    
         surfaceShader.end();
-        
 
-
-    //    float scale1=sin(ofGetFrameNum() / 50.0) * 1;
-    //    for(int z=0; z < dataSize.z; z++) {
-    //        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
-    //        glClearColor(0.0,0.0,0.0,0);
-    //        glClear(GL_COLOR_BUFFER_BIT);
-    //        glBegin(GL_POINTS);
-    //        for(int i=0; i < dataSize.x; i++) {
-    //            for(int j=0; j < dataSize.y; j++) {
-    //                float mod = (noise1[i][j][z]*0.1);
-    //                mod += (noise1[i][j][z] * 0.15);
-    //                mod *= scale1;
-    //                glColor4f(0,0,0,(z/(float)dataSize.z) + mod);
-    //                glVertex2f(i,j);
-    //            }
-    //        }
-    //        glEnd();
-    //    }
-        
-        
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        //    ofFbo
         ofPopView();
     }
 }
