@@ -67,16 +67,24 @@ public:
 	GLuint gridDataSwizzledBuffId;
     
     GLhandleARB programObject;
+    ofShader surfaceShader;
 
     SimplexNoise1234 simplexNoise;
     float noise1[96][96][96];
-    float noise2[96][96][96];
-    float noise3[96][96][96];
-    float noise4[96][96][96];
+//    float noise2[64][64][64];
+//    float noise3[64][64][64];
+//    float noise4[64][64][64];
     
     uint densityFBO;
     uint textureID;
     float *densityData;
+    GLint sliceAttrib, scaleAttrib;
+    
+    GLuint noiseTex, noiseTex2;
+    float *noiseField, *noiseField2;
+    GLuint noiseSize;
+    float *surfaceGridData;
+    GLuint surfaceGridVBO;
 
 
 };

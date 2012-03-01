@@ -104,30 +104,113 @@ void marchingCubesGPU::setup() {
         for(int j=0; j < 96; j++) {
             for(int k=0; k < 96; k++) {
                 noise1[i][j][k] = simplexNoise.noise(i/100.0,j/100.0,k/100.0);
-                noise2[i][j][k] = simplexNoise.noise(i/50.0,j/50.0,k/50.0);
-                noise3[i][j][k] = simplexNoise.noise(i/10.0,j/10.0,k/10.0);
-                noise4[i][j][k] = simplexNoise.noise(i/5.0,j/5.0,k/5.0);
+//                noise2[i][j][k] = simplexNoise.noise(i/50.0,j/50.0,k/50.0);
+//                noise3[i][j][k] = simplexNoise.noise(i/10.0,j/10.0,k/10.0);
+//                noise4[i][j][k] = simplexNoise.noise(i/5.0,j/5.0,k/5.0);
             }
         }
     }
     
+    //create noise textures
+    noiseSize = 256;
+	glGenTextures(1, &noiseTex);
+	glActiveTexture(GL_TEXTURE4);
+	glEnable(GL_TEXTURE_3D);
+	glBindTexture(GL_TEXTURE_3D, noiseTex);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+    //Generate a simplex noise field
+	noiseField = new float[noiseSize*noiseSize*noiseSize];
+	for(int k=0; k<noiseSize; k++)
+        for(int j=0; j<noiseSize; j++)
+            for(int i=0; i<noiseSize; i++){
+                noiseField[i+ j*noiseSize + k*noiseSize*noiseSize] = simplexNoise.noise(i/50.0, j/50.0, k/50.0);
+            }
+	glTexImage3D( GL_TEXTURE_3D, 0, GL_ALPHA16F_ARB, noiseSize, noiseSize, noiseSize, 0, GL_ALPHA, GL_FLOAT, noiseField);
     
+    glDisable(GL_TEXTURE_3D);
+
+    glGenTextures(1, &noiseTex2);
+	glActiveTexture(GL_TEXTURE5);
+	glEnable(GL_TEXTURE_3D);
+	glBindTexture(GL_TEXTURE_3D, noiseTex);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    //Generate a simplex noise field
+	noiseField2 = new float[noiseSize*noiseSize*noiseSize];
+	for(int k=0; k<noiseSize; k++)
+        for(int j=0; j<noiseSize; j++)
+            for(int i=0; i<noiseSize; i++){
+                noiseField2[i+ j*noiseSize + k*noiseSize*noiseSize] = simplexNoise.noise(i/10.0, j/10.0, k/10.0);
+            }
+	glTexImage3D( GL_TEXTURE_3D, 0, GL_ALPHA16F_ARB, noiseSize, noiseSize, noiseSize, 0, GL_ALPHA, GL_FLOAT, noiseField2);
+    
+    glDisable(GL_TEXTURE_3D);
+
 	glDepthMask(true);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClearDepth(1.0);
+    
+    surfaceShader.load("surface");
+    surfaceShader.begin();
+    sliceAttrib = surfaceShader.getAttributeLocation("slice");
+    surfaceShader.setUniform1i("noiseTex", 4);
+    surfaceShader.setUniform1i("noiseTex2", 5);
+    surfaceShader.end();
+    
+    std::cout<<"InitShader: "<<gluErrorString(glGetError())<<"\n";
+
+
+//    surfaceProgram = glCreateProgramObjectARB();
+//	////Shaders loading////
+//	initShader(surfaceProgram, ofToDataPath("surface.vert").c_str(), GL_VERTEX_SHADER_ARB);
+//	//Fragment Shader for per-fragment lighting
+//	initShader(surfaceProgram, ofToDataPath("surface.frag").c_str(), GL_FRAGMENT_SHADER_ARB);
+//    glLinkProgramARB(surfaceProgram);
+//    //	//Test link success
+//	GLint ok = false;
+//    glGetObjectParameterivARB(surfaceProgram, GL_OBJECT_LINK_STATUS_ARB, &ok);
+//	if (!ok){
+//		GLint maxLength=4096;
+//		char *infoLog = new char[maxLength];
+//		glGetInfoLogARB(surfaceProgram, maxLength, &maxLength, infoLog);
+//		std::cout<<"Link error: "<<infoLog<<"\n";
+//		delete []infoLog;
+//	}
+//    
+//    //Program validation
+//    glValidateProgramARB(surfaceProgram);
+//    ok = false;
+//    glGetObjectParameterivARB(surfaceProgram, GL_OBJECT_VALIDATE_STATUS_ARB, &ok);
+//    if (!ok){
+//		int maxLength=4096;
+//		char *infoLog = new char[maxLength];
+//		glGetInfoLogARB(surfaceProgram, maxLength, &maxLength, infoLog);
+//		std::cout<<"Validation error: "<<infoLog<<"\n";
+//		delete []infoLog;
+//	}
+//    
+//	//Bind program object for parameters setting
+////	glUseProgramObjectARB(surfaceProgram);
+    
     
     programObject = glCreateProgramObjectARB();
     
     
 	////Shaders loading////
 	//Geometry Shader loading
-	initShader(programObject, ofToDataPath("TestG80_GS2.geom", true).c_str(), GL_GEOMETRY_SHADER_EXT);
+	initShader(programObject, ofToDataPath("TestG80_GS2.geom").c_str(), GL_GEOMETRY_SHADER_EXT);
 	//Geometry Shader require a Vertex Shader to be used
-	initShader(programObject, ofToDataPath("TestG80_VS.vert",true).c_str(), GL_VERTEX_SHADER_ARB);
+	initShader(programObject, ofToDataPath("TestG80_VS.vert").c_str(), GL_VERTEX_SHADER_ARB);
 	//Fragment Shader for per-fragment lighting
 	initShader(programObject, ofToDataPath("TestG80_FS.frag").c_str(), GL_FRAGMENT_SHADER_ARB);
 	////////
-    
     
 	//Get max number of geometry shader output vertices
 	GLint temp;
@@ -380,6 +463,23 @@ void marchingCubesGPU::setup() {
     
     
     
+    //////Grid data construction
+	//Linear Walk
+	surfaceGridData=new float[static_cast<int>(dataSize.x*dataSize.y*3.0)];
+	int idx=0;
+    for(float j=0; j<dataSize.y; j++)
+        for(float i=0; i<dataSize.x; i++) {
+            surfaceGridData[idx]= i;	
+            surfaceGridData[idx+1]= j;	
+            idx+=2;
+        }
+	//VBO configuration for linear walk
+	glGenBuffersARB(1, &surfaceGridVBO);
+	glBindBuffer(GL_ARRAY_BUFFER_ARB, surfaceGridVBO);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, dataSize.x*dataSize.y*2*sizeof(float), surfaceGridData, GL_STATIC_DRAW_ARB);
+	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    
+    
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -387,11 +487,6 @@ void marchingCubesGPU::setup() {
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     
     densityData = new float[dataSize.x * dataSize.y * dataSize.z * 4];
 //    for(int i=0; i < 64*64*64*4; i++) {
@@ -430,58 +525,86 @@ void marchingCubesGPU::setup() {
 
     glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_3D);
-    glBindTexture(GL_TEXTURE_3D, textureID);
-//    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+//    glBindTexture(GL_TEXTURE_3D, textureID);
+    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
 	glDisable(GL_TEXTURE_3D);
     
 
 }
 
 void marchingCubesGPU::prepareToDraw() {
-//    glMatrixMode(GL_MODELVIEW);
-//    glPushMatrix();
-//    glLoadIdentity();
-	ofPushView();
-//    glMatrixMode(GL_PROJECTION); 
-//    glLoadIdentity(); 
-//    gluOrtho2D(0.0,64,0.0,64); 
-    ofViewport(0, 0, dataSize.x, dataSize.y, false);
-    ofSetupScreenPerspective(dataSize.x, dataSize.y, ofGetOrientation(), false);
-//    glMatrixMode(GL_PROJECTION);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    glOrtho(0,64,0,64,0,64);
-//    glViewport(0, 0, 64,64);
-    glDisable(GL_TEXTURE_3D);
-    glDisable(GL_DEPTH_TEST);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
-    float scale1=sin(ofGetFrameNum() / 90.0);
-    for(int z=0; z < dataSize.z; z++) {
-        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
-        glClearColor(0.0,0.0,0.0,0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glBegin(GL_POINTS);
-        for(int i=0; i < dataSize.x; i++) {
-            for(int j=0; j < dataSize.y; j++) {
-                float mod = (noise1[i][j][z]*0.5);
-                mod += (noise2[i][j][z] * 0.3);
-                mod *= scale1;
-                glColor4f(0,0,0,(z/(float)dataSize.z) + mod);
-                glVertex2f(i,j);
-            }
+    if (3 == curData) {
+        ofPushView();
+
+        ofViewport(0, 0, dataSize.x, dataSize.y, false);
+        ofSetupScreenPerspective(dataSize.x, dataSize.y, ofGetOrientation(), false);
+        glDisable(GL_TEXTURE_3D);
+        glEnable(GL_DEPTH_TEST);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, densityFBO);	
+        
+    //    surfaceShader.begin();
+    //    float scale1=sin(ofGetFrameNum() / 50.0) * 2;
+    //    surfaceShader.setUniform1f("scale", scale1);
+    //    for(int z=0; z < dataSize.z; z++) {
+    //        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
+    //        glClearColor(0.0,0.0,0.0,0);
+    //        glClear(GL_COLOR_BUFFER_BIT);
+    //        glBegin(GL_POINTS);
+    //        surfaceShader.setAttribute1f(sliceAttrib, z);
+    //        for(int i=0; i < dataSize.x; i++) {
+    //            for(int j=0; j < dataSize.y; j++) {
+    //                glVertex2f(i,j);
+    //            }
+    //        }
+    //        glEnd();
+    //    }
+    //    surfaceShader.end();
+        
+        surfaceShader.begin();
+        float scale1=sin(ofGetFrameNum() / 50.0) * 2;
+        scale1 *= cos(ofGetFrameNum() / 29.0);
+        scale1 += cos(ofGetFrameNum() / 2.0) * 0.2;
+        surfaceShader.setUniform1f("scale", scale1);
+        glBindBuffer(GL_ARRAY_BUFFER_ARB, surfaceGridVBO);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0,  NULL);
+
+        for(int z=0; z < dataSize.z; z++) {
+            glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
+            glClearColor(0.0,0.0,0.0,0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            surfaceShader.setAttribute1f(sliceAttrib, z);
+            glDrawArrays(GL_POINTS, 0, dataSize.x*dataSize.y);
         }
-        glEnd();
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);    
+        surfaceShader.end();
+        
+
+
+    //    float scale1=sin(ofGetFrameNum() / 50.0) * 1;
+    //    for(int z=0; z < dataSize.z; z++) {
+    //        glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_3D, textureID, 0 ,z);
+    //        glClearColor(0.0,0.0,0.0,0);
+    //        glClear(GL_COLOR_BUFFER_BIT);
+    //        glBegin(GL_POINTS);
+    //        for(int i=0; i < dataSize.x; i++) {
+    //            for(int j=0; j < dataSize.y; j++) {
+    //                float mod = (noise1[i][j][z]*0.1);
+    //                mod += (noise1[i][j][z] * 0.15);
+    //                mod *= scale1;
+    //                glColor4f(0,0,0,(z/(float)dataSize.z) + mod);
+    //                glVertex2f(i,j);
+    //            }
+    //        }
+    //        glEnd();
+    //    }
+        
+        
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        //    ofFbo
+        ofPopView();
     }
-    
-//    glMatrixMode(GL_PROJECTION);
-//    glPopMatrix();
-//    glMatrixMode(GL_MODELVIEW);
-//    glPopMatrix();
-
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    //    ofFbo
-	ofPopView();
-
 }
 
 
@@ -520,6 +643,8 @@ void marchingCubesGPU::draw() {
     
     
     
+    //Shader program binding
+    glUseProgramObjectARB(programObject);
 
 	glDepthMask(GL_TRUE);
 	glClearColor(0.0,0.0,0.0,0.0);
@@ -538,10 +663,8 @@ void marchingCubesGPU::draw() {
     
 	glColor4f(cosf(isolevel*10.0-0.5), sinf(isolevel*10.0-0.5), cosf(1.0-isolevel),1.0);
     
-    //Shader program binding
-    glUseProgramObjectARB(programObject);
     //    //Current isolevel uniform parameter setting
-    glUniform1f(glGetUniformLocationARB(programObject, "isolevel"), isolevel); 
+    glUniform1f(glGetUniformLocationARB(programObject, "isolevel"), ofGetMouseX() / (float)ofGetWidth()); 
     
     //glEnable(GL_LIGHTING);
     
@@ -602,8 +725,13 @@ void marchingCubesGPU::toggleWireframe() {
     wireframe = !wireframe;
 }
 void marchingCubesGPU::nextData() {
-    if (2==curData) curData=0; else curData++;
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+    if (3==curData) curData=0; else curData++;
+    if (curData < 3) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_3D, this->dataFieldTex[curData]);
+    }else{
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_3D, textureID);
+    }
     
 }

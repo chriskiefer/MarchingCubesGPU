@@ -18,6 +18,8 @@
 		83544891140CFBC900D16314 /* maxiGrains.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544887140CFBC900D16314 /* maxiGrains.cpp */; };
 		83544892140CFBC900D16314 /* maxiMFCC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544889140CFBC900D16314 /* maxiMFCC.cpp */; };
 		83544893140CFBC900D16314 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8354488B140CFBC900D16314 /* maximilian.cpp */; };
+		8376D83D14FE23B800F2831D /* surface.vert in Sources */ = {isa = PBXBuildFile; fileRef = 8376D83C14FE23B800F2831D /* surface.vert */; };
+		8376D83F14FE240C00F2831D /* surface.frag in Sources */ = {isa = PBXBuildFile; fileRef = 8376D83E14FE240C00F2831D /* surface.frag */; };
 		83EE5CC214F98B6D00DF08E6 /* marchingCubesGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE5CC114F98B6D00DF08E6 /* marchingCubesGPU.cpp */; };
 		83EE5CC814FA92CD00DF08E6 /* simplexnoise1234.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE5CC614FA92CD00DF08E6 /* simplexnoise1234.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
@@ -90,6 +92,8 @@
 		8354488B140CFBC900D16314 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maximilian.cpp; sourceTree = "<group>"; };
 		8354488C140CFBC900D16314 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maximilian.h; sourceTree = "<group>"; };
 		8354488E140CFBC900D16314 /* ofxMaxim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMaxim.h; sourceTree = "<group>"; };
+		8376D83C14FE23B800F2831D /* surface.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = surface.vert; path = bin/data/surface.vert; sourceTree = SOURCE_ROOT; };
+		8376D83E14FE240C00F2831D /* surface.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = surface.frag; path = bin/data/surface.frag; sourceTree = SOURCE_ROOT; };
 		83EE5CC014F98B6100DF08E6 /* marchingCubesGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = marchingCubesGPU.h; sourceTree = "<group>"; };
 		83EE5CC114F98B6D00DF08E6 /* marchingCubesGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = marchingCubesGPU.cpp; sourceTree = "<group>"; };
 		83EE5CC614FA92CD00DF08E6 /* simplexnoise1234.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplexnoise1234.cpp; sourceTree = "<group>"; };
@@ -151,6 +155,8 @@
 				830D681F14F84D6800D4ED21 /* TestG80_GS2.geom */,
 				830D682014F84D6800D4ED21 /* TestG80_VS.vert */,
 				830D682114F84D6800D4ED21 /* TestG80_VS2.vert */,
+				8376D83C14FE23B800F2831D /* surface.vert */,
+				8376D83E14FE240C00F2831D /* surface.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -389,6 +395,8 @@
 				830D682714F84D6800D4ED21 /* TestG80_VS2.vert in Sources */,
 				83EE5CC214F98B6D00DF08E6 /* marchingCubesGPU.cpp in Sources */,
 				83EE5CC814FA92CD00DF08E6 /* simplexnoise1234.cpp in Sources */,
+				8376D83D14FE23B800F2831D /* surface.vert in Sources */,
+				8376D83F14FE240C00F2831D /* surface.frag in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
