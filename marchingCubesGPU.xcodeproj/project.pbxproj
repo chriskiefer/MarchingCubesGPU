@@ -13,11 +13,6 @@
 		830D682514F84D6800D4ED21 /* TestG80_GS2.geom in Sources */ = {isa = PBXBuildFile; fileRef = 830D681F14F84D6800D4ED21 /* TestG80_GS2.geom */; };
 		830D682614F84D6800D4ED21 /* TestG80_VS.vert in Sources */ = {isa = PBXBuildFile; fileRef = 830D682014F84D6800D4ED21 /* TestG80_VS.vert */; };
 		830D682714F84D6800D4ED21 /* TestG80_VS2.vert in Sources */ = {isa = PBXBuildFile; fileRef = 830D682114F84D6800D4ED21 /* TestG80_VS2.vert */; };
-		8354488F140CFBC900D16314 /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544883140CFBC900D16314 /* fft.cpp */; };
-		83544890140CFBC900D16314 /* maxiFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544885140CFBC900D16314 /* maxiFFT.cpp */; };
-		83544891140CFBC900D16314 /* maxiGrains.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544887140CFBC900D16314 /* maxiGrains.cpp */; };
-		83544892140CFBC900D16314 /* maxiMFCC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83544889140CFBC900D16314 /* maxiMFCC.cpp */; };
-		83544893140CFBC900D16314 /* maximilian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8354488B140CFBC900D16314 /* maximilian.cpp */; };
 		8376D83D14FE23B800F2831D /* surface.vert in Sources */ = {isa = PBXBuildFile; fileRef = 8376D83C14FE23B800F2831D /* surface.vert */; };
 		8376D83F14FE240C00F2831D /* surface.frag in Sources */ = {isa = PBXBuildFile; fileRef = 8376D83E14FE240C00F2831D /* surface.frag */; };
 		83EE5CC214F98B6D00DF08E6 /* marchingCubesGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE5CC114F98B6D00DF08E6 /* marchingCubesGPU.cpp */; };
@@ -80,18 +75,6 @@
 		830D681F14F84D6800D4ED21 /* TestG80_GS2.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TestG80_GS2.geom; path = bin/data/TestG80_GS2.geom; sourceTree = SOURCE_ROOT; };
 		830D682014F84D6800D4ED21 /* TestG80_VS.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TestG80_VS.vert; path = bin/data/TestG80_VS.vert; sourceTree = SOURCE_ROOT; };
 		830D682114F84D6800D4ED21 /* TestG80_VS2.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TestG80_VS2.vert; path = bin/data/TestG80_VS2.vert; sourceTree = SOURCE_ROOT; };
-		83544881140CFBC900D16314 /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
-		83544883140CFBC900D16314 /* fft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fft.cpp; sourceTree = "<group>"; };
-		83544884140CFBC900D16314 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
-		83544885140CFBC900D16314 /* maxiFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxiFFT.cpp; sourceTree = "<group>"; };
-		83544886140CFBC900D16314 /* maxiFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxiFFT.h; sourceTree = "<group>"; };
-		83544887140CFBC900D16314 /* maxiGrains.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxiGrains.cpp; sourceTree = "<group>"; };
-		83544888140CFBC900D16314 /* maxiGrains.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxiGrains.h; sourceTree = "<group>"; };
-		83544889140CFBC900D16314 /* maxiMFCC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxiMFCC.cpp; sourceTree = "<group>"; };
-		8354488A140CFBC900D16314 /* maxiMFCC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maxiMFCC.h; sourceTree = "<group>"; };
-		8354488B140CFBC900D16314 /* maximilian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maximilian.cpp; sourceTree = "<group>"; };
-		8354488C140CFBC900D16314 /* maximilian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maximilian.h; sourceTree = "<group>"; };
-		8354488E140CFBC900D16314 /* ofxMaxim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMaxim.h; sourceTree = "<group>"; };
 		8376D83C14FE23B800F2831D /* surface.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = surface.vert; path = bin/data/surface.vert; sourceTree = SOURCE_ROOT; };
 		8376D83E14FE240C00F2831D /* surface.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = surface.frag; path = bin/data/surface.frag; sourceTree = SOURCE_ROOT; };
 		83EE5CC014F98B6100DF08E6 /* marchingCubesGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = marchingCubesGPU.h; sourceTree = "<group>"; };
@@ -161,42 +144,6 @@
 			name = shaders;
 			sourceTree = "<group>";
 		};
-		83544880140CFBC900D16314 /* ofxMaxim */ = {
-			isa = PBXGroup;
-			children = (
-				83544881140CFBC900D16314 /* install.xml */,
-				83544882140CFBC900D16314 /* libs */,
-				8354488D140CFBC900D16314 /* src */,
-			);
-			name = ofxMaxim;
-			path = ../../../addons/ofxMaxim;
-			sourceTree = SOURCE_ROOT;
-		};
-		83544882140CFBC900D16314 /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				83544883140CFBC900D16314 /* fft.cpp */,
-				83544884140CFBC900D16314 /* fft.h */,
-				83544885140CFBC900D16314 /* maxiFFT.cpp */,
-				83544886140CFBC900D16314 /* maxiFFT.h */,
-				83544887140CFBC900D16314 /* maxiGrains.cpp */,
-				83544888140CFBC900D16314 /* maxiGrains.h */,
-				83544889140CFBC900D16314 /* maxiMFCC.cpp */,
-				8354488A140CFBC900D16314 /* maxiMFCC.h */,
-				8354488B140CFBC900D16314 /* maximilian.cpp */,
-				8354488C140CFBC900D16314 /* maximilian.h */,
-			);
-			path = libs;
-			sourceTree = "<group>";
-		};
-		8354488D140CFBC900D16314 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				8354488E140CFBC900D16314 /* ofxMaxim.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
 		83EE5CC514F990D400DF08E6 /* marchingCubes */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,7 +160,6 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				83544880140CFBC900D16314 /* ofxMaxim */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -382,11 +328,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				8354488F140CFBC900D16314 /* fft.cpp in Sources */,
-				83544890140CFBC900D16314 /* maxiFFT.cpp in Sources */,
-				83544891140CFBC900D16314 /* maxiGrains.cpp in Sources */,
-				83544892140CFBC900D16314 /* maxiMFCC.cpp in Sources */,
-				83544893140CFBC900D16314 /* maximilian.cpp in Sources */,
 				830D682214F84D6800D4ED21 /* TestG80_FS_Simple.frag in Sources */,
 				830D682314F84D6800D4ED21 /* TestG80_FS.frag in Sources */,
 				830D682414F84D6800D4ED21 /* TestG80_GS.geom in Sources */,
